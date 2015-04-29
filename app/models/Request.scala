@@ -12,4 +12,5 @@ case class Request(name: String,
   column:Option[String] = None,
   filter:Option[String] = None,
   language:Option[String] = None,
-  field:Option[String] = None )
+  field:Option[String] = None,
+  format:Option[String] = None)

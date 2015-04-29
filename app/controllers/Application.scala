@@ -29,7 +29,7 @@ object Application extends Controller {
   def  getTableContent(name:String) = Action.async{ implicit request =>
     parser(name) {
       model => {
-        execute(Q.build(model))
+        execute(Q.build(model), model)
       }
     }
   }
@@ -37,18 +37,22 @@ object Application extends Controller {
   def filterByColumn(name:String, column:String, filter:String) = Action.async{ implicit request =>
     parser(name,Some(column),Some(filter)) {
       model => {
-        execute(Q.build(model))
+        execute(Q.build(model), model)
       }
     }
   }
 
 
 
-  def query = Action.async(parse.json) { request =>
-    (request.body \ "query").asOpt[String].map { q =>
-      execute(q)
-    }.getOrElse {
-      Future.successful( BadRequest("Missing parameter [query]") )
+  def query = Action.async(parse.json) { implicit request =>
+    parser("") {
+      model => {
+        (request.body \ "query").asOpt[String].map { q =>
+          execute(q, model)
+        }.getOrElse {
+          Future.successful( BadRequest("Missing parameter [query]") )
+        }
+      }
     }
   }
 
@@ -62,8 +66,9 @@ object Application extends Controller {
     val order: Option[String] = request.getQueryString("order")
     val language: Option[String] = request.getQueryString("language")
     val field: Option[String] = request.getQueryString("field")
+    val format: Option[String] = request.getQueryString("format")
 
-    val req = models.Request(name,func=function,limit=limit,offset=offset,by=by,order=order,column=column,filter= filter,language=language, field=field)
+    val req = models.Request(name,func=function,limit=limit,offset=offset,by=by,order=order,column=column,filter= filter,language=language, field=field, format=format)
 
     Q.validate(req) match{
       case true => callback(req)
@@ -72,7 +77,17 @@ object Application extends Controller {
   }
 
 
-  def execute(query:String) = {
+  def execute(query:String, request: models.Request) = {
+    request.format match {
+      case  Some("json") => {
+        Logger.debug("json here")
+      }
+      case _ => {
+        Logger.debug("nothing to do here")
+      }
+    }
+
+    Logger.debug(query)
     DAO.execute(query) map {
       case a:List[Row] => {
         val newList = a.flatMap(b => List(b.toXML()))
