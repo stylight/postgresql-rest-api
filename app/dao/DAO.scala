@@ -1,12 +1,14 @@
 package dao
 
+import java.sql
+
 import models._
 import anorm._
 
 import scala.concurrent.Future
 
 import play.api.http.Status.BAD_REQUEST
-import java.sql.Timestamp
+import java.sql.{Time, Timestamp}
 import org.joda.time.DateTime
 
 // IMPORTANT import this to have the required tools in your scope
@@ -73,30 +75,37 @@ object DAO {
     }
   }
 
-
-  implicit def rowToFloat: Column[Float] = Column.nonNull { (value, meta) =>
+  implicit def rowToFloat: Column[Float] = Column[Float] { (value, meta) =>
     val MetaDataItem(qualified, nullable, clazz) = meta
     value match {
       case int: Int => Right(int: Float)
       case long: Long => Right(long: Float)
       case float: Float => Right(float)
-      case _ => Left(TypeDoesNotMatch("Cannot convert " + value + ":" + value.asInstanceOf[AnyRef].getClass + " to Float for column " + qualified))
+      case _ => Right(.0f)
     }
   }
 
-  implicit def rowToTimestamp: Column[Timestamp] = Column.nonNull { (value, meta) =>
+  implicit def rowToDate: Column[Date] = Column[Date] { (value, meta) =>
+    val MetaDataItem(qualified, nullable, clazz) = meta
+    value match {
+      case ts: java.sql.Date => Right(ts)
+      case _ => Right(new sql.Date(0L))
+    }
+  }
+
+  implicit def rowToTimestamp: Column[Timestamp] = Column[Timestamp] { (value, meta) =>
     val MetaDataItem(qualified, nullable, clazz) = meta
     value match {
       case ts: java.sql.Timestamp => Right(ts)
-      case _ => Left(TypeDoesNotMatch("Cannot convert " + value + ":" + value.asInstanceOf[AnyRef].getClass) )
+      case _ => Right(new java.sql.Timestamp(0L))
     }
   }
 
-  implicit def rowToTime: Column[java.sql.Time] = Column.nonNull { (value, meta) =>
+  implicit def rowToTime: Column[java.sql.Time] = Column[Time] { (value, meta) =>
     val MetaDataItem(qualified, nullable, clazz) = meta
     value match {
       case time:  java.sql.Time => Right(time)
-      case _ => Left(TypeDoesNotMatch("Cannot convert " + value + ":" + value.asInstanceOf[AnyRef].getClass) )
+      case _ => Right(new java.sql.Time(0L))
     }
   }
 }
