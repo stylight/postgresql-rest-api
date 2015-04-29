@@ -1,4 +1,4 @@
-PostgreSQL HTTP Rest API [![Build Status][travis-ci_status_img]][travis-ci_status] [![Coverage Status][coveralls_status_img]][coveralls_status]
+PostgreSQL HTTP Rest API
 ======
 
 This is an HTTP Rest API(or REST like, as it is not completed yet) for PostgreSQL databases. This application allows you fetch your data from your database immediately via Rest API as in JSON format without developing any web middle layer.
