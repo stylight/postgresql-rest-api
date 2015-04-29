@@ -75,11 +75,13 @@ object Application extends Controller {
   def execute(query:String) = {
     DAO.execute(query) map {
       case a:List[Row] => {
-        val newList = a.flatMap(b => List(b.toJson()))
+        val newList = a.flatMap(b => List(b.toXML()))
         if( newList.size ==  0){
           NoContent
         }else{
-          Ok(Json.toJson(newList))
+          //Ok(Json.toJson(newList))
+          //Ok(newList.foldLeft("")((sofar, v) => sofar + "<row>%s</row>".format(v)))
+          Ok(newList.mkString("<results><row>","</row><row>","</row></results>"))
         }
       }
       case e:Err => BadRequest(Json.toJson(e))

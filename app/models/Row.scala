@@ -33,6 +33,15 @@ class Row {
     }
   }
 
+  def toXML(): String = {
+    if(hasElement){
+      val list = for ((k,v) <- map) yield "<%s>%s</%s>".format(k, v, k)
+      list.reduce(_ ++ _)
+    }else{
+      ""
+    }
+  }
+
   private def anyWriter(a:Any): JsValue = {
     a match {
       case a: Double => Json.toJson(a)
