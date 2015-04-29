@@ -77,31 +77,43 @@ object Application extends Controller {
   }
 
 
-  def execute(query:String, request: models.Request) = {
-    request.format match {
-      case  Some("json") => {
-        Logger.debug("json here")
-      }
-      case _ => {
-        Logger.debug("nothing to do here")
-      }
+  def genResponseJson(list:List[Row]) : String = {
+    val newList = list.flatMap(b => List(b.toJson()))
+    if( newList.size ==  0){
+      ""
+    }else{
+      Json.toJson(newList).toString()
+    }
+  }
+
+  def genResponseXML(list:List[Row]) : String = {
+    val newList = list.flatMap(b => List(b.toXML()))
+    if( newList.size ==  0){
+      ""
+    }else{
+      newList.mkString("<results><row>","</row><row>","</row></results>")
     }
 
+  }
+
+  def execute(query:String, request: models.Request) = {
     Logger.debug(query)
     DAO.execute(query) map {
       case a:List[Row] => {
-        val newList = a.flatMap(b => List(b.toXML()))
-        if( newList.size ==  0){
-          NoContent
-        }else{
-          //Ok(Json.toJson(newList))
-          //Ok(newList.foldLeft("")((sofar, v) => sofar + "<row>%s</row>".format(v)))
-          Ok(newList.mkString("<results><row>","</row><row>","</row></results>"))
+        request.format match {
+          case Some("xml") => {
+            Ok(genResponseXML(a))
+          }
+          case _ => {
+            Ok(genResponseJson(a))
+          }
+
         }
       }
-      case e:Err => BadRequest(Json.toJson(e))
+      case e: Err => BadRequest(Json.toJson(e))
       case _ => BadRequest("Bad request wrong table name or connection error")
     }
+
   }
 
 
