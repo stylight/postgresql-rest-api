@@ -3,6 +3,7 @@ package models
 
 import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
 import java.sql.Timestamp
+import xml.Utility.escape
 
 /**
  * Created by Engin Yoeyen on 02/10/14.
@@ -35,7 +36,7 @@ class Row {
 
   def toXML(): String = {
     if(hasElement){
-      val list = for ((k,v) <- map) yield "<%s>%s</%s>".format(k, v, k)
+      val list = for ((k,v) <- map) yield "<%s>%s</%s>".format(k, escape(v.toString), k)
       list.reduce(_ ++ _)
     }else{
       ""
