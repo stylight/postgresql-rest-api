@@ -23,7 +23,7 @@ object App {
       "db.default.driver" -> "org.postgresql.Driver",
       "db.default.url" -> "jdbc:postgresql://localhost:5432/booktown",
       "evolutionplugin" -> "enabled",
-      "db.default.user" -> "postgres",
+      "db.default.user" -> "",
       "db.default.password" -> "",
       "applyEvolutions.default" -> "true",
       "applyDownEvolutions.default" -> "true"

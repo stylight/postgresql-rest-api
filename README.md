@@ -39,6 +39,9 @@ GET  http://localhost:9000/table/books/subject_id/2
 # Returns 50 rows from the books table
 GET  http://localhost:9000/table/books?limit=50
 
+# Returns 10 rows from the books table sorted by subject_id descending
+GET  http://localhost:9000/table/books?limit=10&by=subject_id+desc
+
 # Returns 50 rows from book table where subject_id is equal to 2
 GET  http://localhost:9000/table/books/subject_id/2?limit=50
 
@@ -70,7 +73,7 @@ Format:
 
 
 # Will return all the columns in the table
-GET  http://localhost:9000/table/books?columns
+GET  http://localhost:9000/table/books?f=columns
 
 ```
 
