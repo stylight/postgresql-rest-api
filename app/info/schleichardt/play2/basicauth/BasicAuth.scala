@@ -25,7 +25,7 @@ class CredentialsFromConfChecker extends CredentialChecker {
 
   override def authorized(credentials: Option[Credentials], authType: String) = {
 
-    if (credentials.isDefined) {
+    if (credentials.isDefined && credentials.get.userName.nonEmpty) {
       val authConf = Play.current.configuration.getConfig("%s.auth".format(authType))
 
       authConf.flatMap(_.getString(credentials.get.userName)).exists(_ == credentials.get.password)
