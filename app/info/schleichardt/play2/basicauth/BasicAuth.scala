@@ -12,22 +12,22 @@ import play.api.Play
 import play.api.libs.Crypto
 import org.apache.commons.codec.binary.Base64.encodeBase64
 
+import play.api.Logger
+
 case class Credentials(userName: String, password: String)
 
 trait CredentialChecker {
-  def authorized(credentials: Option[Credentials]): Boolean
+  def authorized(credentials: Option[Credentials], authType: String): Boolean
 }
 
 class CredentialsFromConfChecker extends CredentialChecker {
   import CredentialsFromConfChecker._
 
-  override def authorized(credentials: Option[Credentials]) = {
+  override def authorized(credentials: Option[Credentials], authType: String) = {
+
     if (credentials.isDefined) {
-      val authConf = Play.current.configuration.getConfig("basic.auth")
-      //ORIGINAL FUNCTIONALITY
-      //val hashedCredentials = hashCredentialsWithApplicationSecret(credentials.get)
-      //authConf.flatMap(_.getString(credentials.get.userName)).exists(_ == hashedCredentials)
-      //MAKE comparision with password - 11.10.2014
+      val authConf = Play.current.configuration.getConfig("%s.auth".format(authType))
+
       authConf.flatMap(_.getString(credentials.get.userName)).exists(_ == credentials.get.password)
     } else {
       false
@@ -50,15 +50,37 @@ object CredentialsFromConfChecker {
   }
 }
 
-case class Authenticator(checker: CredentialChecker, message: String = "Authentication needed") extends Function2[RequestHeader, () => Option[Handler], Option[Handler]] {
+case class Authenticator(checker: CredentialChecker, authType: String = "basic", message: String = "Authentication needed") extends Function2[RequestHeader, () => Option[Handler], Option[Handler]] {
+
   import BasicAuth._
+  import GetAuth._
+
   override def apply(request: RequestHeader, defaultHandler: () => Option[Handler]): Option[Handler] = {
-    val mayBeCredentials = extractAuthDataFromHeader(request.headers.get("Authorization"))
-    if(checker.authorized(mayBeCredentials)){
+
+    var mayBeCredentials: Option[Credentials] = Option(Credentials("", ""))
+
+    authType match {
+      case "get" => {
+        mayBeCredentials = extractAuthDataFromGet(request)
+      }
+      case _ => {
+        mayBeCredentials = extractAuthDataFromHeader(request.headers.get("Authorization"))
+      }
+    }
+
+    if(checker.authorized(mayBeCredentials, authType)){
       defaultHandler()
     } else {
-      unauthorizedHandlerOption(message)
+       unauthorizedHandlerOption(message)
     }
+  }
+}
+
+object GetAuth {
+  def extractAuthDataFromGet(request: RequestHeader): Option[Credentials] = {
+
+    Option(Credentials(request.getQueryString("user").getOrElse(""),
+      request.getQueryString("passwd").getOrElse("")))
   }
 }
 

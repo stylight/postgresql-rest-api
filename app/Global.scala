@@ -13,16 +13,16 @@ import play.api.Logger
  */
 object Global extends GlobalSettings {
 
-  val requireBasicAuthentication = Authenticator(new CredentialsFromConfChecker)
+
   override def onRouteRequest(request: RequestHeader) = {
 
     if (Config.baseAuthenticationEnabled) {
-        Logger.info("base auth")
+        val requireBasicAuthentication = Authenticator(new CredentialsFromConfChecker)
         requireBasicAuthentication(request, () => super.onRouteRequest(request))
     }
     if (Config.getAuthenticationEnabled) {
-        Logger.info("get auth")
-        super.onRouteRequest(request)
+        val requireGetAuthentication = Authenticator(new CredentialsFromConfChecker, "get")
+        requireGetAuthentication(request, () => super.onRouteRequest(request))
     }
     else{
       super.onRouteRequest(request)
