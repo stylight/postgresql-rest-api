@@ -10,5 +10,8 @@ object Config {
 
   val baseUrl = config.getString("application.baseUrl")
 
-  val authenticationEnabled = config.hasPath("basic.auth")
+  val baseAuthenticationEnabled = config.hasPath("basic.auth")
+  val getAuthenticationEnabled = config.hasPath("get.auth")
+
+  override def toString = s"Config($config)"
 }
