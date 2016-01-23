@@ -63,7 +63,7 @@ object DAO {
     clazz match {
       case "java.lang.Integer" => row[Int](value)
       case "java.lang.String" => row[String](value)
-      case "java.lang.Boolean" => row[Boolean](value)
+      case "java.lang.Boolean" => row[Option[Boolean]](value)
       case "java.lang.Long" => row[Long](value)
       case "java.lang.Float" => row[Float](value)
       case "java.math.BigInteger" =>  row[java.math.BigInteger](value)
