@@ -54,8 +54,8 @@ class Row {
       case a: Timestamp => Json.toJson(a)
       case a: java.sql.Time => Json.toJson(a)
       case a: Date => Json.toJson(a)
-      case a: java.math.BigInteger => Json.toJson( a.toString()) //TEMPORARY SOLUTION WRITE
-      case a: java.math.BigDecimal => Json.toJson(JsNumber(a))
+      case a: java.math.BigInteger => Json.toJson(a.toString()) //TEMPORARY SOLUTION WRITE
+      case a: BigDecimal => Json.toJson(a)
 
       case _ => throw new RuntimeException("Type not serializable : "+a)
     }
