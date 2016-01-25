@@ -63,11 +63,11 @@ object DAO {
     clazz match {
       case "java.lang.Integer" => row[Int](value)
       case "java.lang.String" => row[String](value)
-      case "java.lang.Boolean" => row[Boolean](value)
+      case "java.lang.Boolean" => row[Option[Boolean]](value)
       case "java.lang.Long" => row[Long](value)
       case "java.lang.Float" => row[Float](value)
       case "java.math.BigInteger" =>  row[java.math.BigInteger](value)
-      case "java.math.BigDecimal" =>  row[java.math.BigDecimal](value)
+      case "java.math.BigDecimal" =>  row[BigDecimal](value)
       case "java.sql.Date" =>  row[Date](value)
       case "java.sql.Timestamp" =>  row[Timestamp](value)
       case "java.sql.Time" =>  row[java.sql.Time](value)
@@ -108,4 +108,23 @@ object DAO {
       case _ => Right(new java.sql.Time(0L))
     }
   }
+
+  implicit def rowToString: Column[String] = Column[String] { (value, meta) =>
+    val MetaDataItem(qualified, nullable, clazz) = meta
+    value match {
+      case str:  String => Right(str)
+      case _ => Right(s"")
+    }
+  }
+
+  implicit def rowToBigDecimal: Column[BigDecimal] = Column[BigDecimal] { (value, meta) =>
+
+    val MetaDataItem(qualified, nullable, clazz) = meta
+    value match {
+      case bd: BigDecimal => Right(bd)
+      case _ => Right(BigDecimal(0))
+    }
+  }
+
+
 }
