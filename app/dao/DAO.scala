@@ -66,6 +66,7 @@ object DAO {
       case "java.lang.Boolean" => row[Option[Boolean]](value)
       case "java.lang.Long" => row[Long](value)
       case "java.lang.Float" => row[Float](value)
+      case "java.lang.Double" => row[Double](value)
       case "java.math.BigInteger" =>  row[java.math.BigInteger](value)
       case "java.math.BigDecimal" =>  row[BigDecimal](value)
       case "java.sql.Date" =>  row[Date](value)
