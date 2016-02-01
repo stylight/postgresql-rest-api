@@ -27,6 +27,7 @@ class Row {
 
   def toJson(): Option[JsObject] = {
     if(hasElement){
+
       val list = for ((k,v) <- map) yield Json.obj( k -> anyWriter(v))
       Some(list.reduce(_ ++ _))
     }else{
@@ -63,13 +64,13 @@ class Row {
       case a: Boolean => Json.toJson(a)
       case a: Timestamp => Json.toJson(a)
       case a: java.sql.Time => Json.toJson(a)
-      case a: Date => Json.toJson(a)
+      case a: Date => Json.toJson(a.toString)
       case a: java.math.BigInteger => Json.toJson(a.toString())
       case a: BigDecimal => Json.toJson(a)
 
       case a: Any => Json.toJson("None")
 
-      case _ => throw new RuntimeException("Type not serializable : "+a)
+      case _ => throw new RuntimeException("Type not serializable : " + a)
     }
   }
 
