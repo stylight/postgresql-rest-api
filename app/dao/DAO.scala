@@ -40,7 +40,7 @@ object DAO {
         val jsonList = values().map ( row => {
           val rowData = new models.Row()
           for (columnList <- row.metaData.ms) {
-            rowData.update(columnList.column.alias.get)(extractValue(columnList.clazz,row,columnList.column.alias.get))
+            rowData.update(columnList.column.alias.get)(extractValue(columnList.clazz, row, columnList.column.alias.get))
           }
           rowData
         }

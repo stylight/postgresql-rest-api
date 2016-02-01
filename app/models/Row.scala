@@ -34,9 +34,18 @@ class Row {
     }
   }
 
+  def clear(a: Any) = {
+     a match {
+      case Some(true) => "True"
+      case Some(false) => "False"
+      case _ => a
+    }
+
+  }
+
   def toXML(): String = {
     if(hasElement){
-      val list = for ((k,v) <- map) yield "<%s>%s</%s>".format(k, escape(v.toString), k)
+      val list = for ((k,v) <- map) yield "<%s>%s</%s>".format(k, escape(clear(v).toString), k)
       list.reduce(_ ++ _)
     }else{
       ""
@@ -45,7 +54,7 @@ class Row {
 
   private def anyWriter(a:Any): JsValue = {
 
-    a match {
+    clear(a) match {
       case a: Double => Json.toJson(a)
       case a: Float => Json.toJson(a)
       case a: Long => Json.toJson(a)
@@ -55,8 +64,9 @@ class Row {
       case a: Timestamp => Json.toJson(a)
       case a: java.sql.Time => Json.toJson(a)
       case a: Date => Json.toJson(a)
-      case a: java.math.BigInteger => Json.toJson(a.toString()) //TEMPORARY SOLUTION WRITE
+      case a: java.math.BigInteger => Json.toJson(a.toString())
       case a: BigDecimal => Json.toJson(a)
+
       case a: Any => Json.toJson("None")
 
       case _ => throw new RuntimeException("Type not serializable : "+a)
