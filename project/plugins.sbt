@@ -9,6 +9,8 @@ addSbtPlugin("org.scoverage" % "sbt-coveralls" % "0.99.0")
 //for building fat-jar
 addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.1")
 
+addSbtPlugin("se.marcuslonnberg" % "sbt-docker" % "1.2.0")
+
 // Comment to get more information during initialization
 logLevel := Level.Warn
 
