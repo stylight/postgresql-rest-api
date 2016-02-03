@@ -18,6 +18,10 @@ object Application extends Controller {
     Ok("")
   }
 
+  def healthcheck = Action {
+    Ok("")
+  }
+
   def getTables = Action.async {
     import  models.Table.tableFormat
     DAO.getTables map {

@@ -7,20 +7,18 @@ import utils.Config
 import play.api.Logger
 
 
-
-/**
- * Created by Engin Yoeyen on 11/10/14.
- */
 object Global extends GlobalSettings {
-
 
   override def onRouteRequest(request: RequestHeader) = {
 
-    if (Config.baseAuthenticationEnabled) {
+    if (request.path == "/healthcheck") {
+        super.onRouteRequest(request)
+    }
+    else if (Config.baseAuthenticationEnabled) {
         val requireBasicAuthentication = Authenticator(new CredentialsFromConfChecker)
         requireBasicAuthentication(request, () => super.onRouteRequest(request))
     }
-    if (Config.getAuthenticationEnabled) {
+    else if (Config.getAuthenticationEnabled) {
         val requireGetAuthentication = Authenticator(new CredentialsFromConfChecker, "get")
         requireGetAuthentication(request, () => super.onRouteRequest(request))
     }

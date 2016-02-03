@@ -4,5 +4,7 @@ GET     /table/:name/:column/:filter          controllers.Application.filterByCo
 
 POST    /query                                controllers.Application.query
 
+GET     /healthcheck                          controllers.Application.healthcheck
+
 GET     /                           controllers.Application.index
 GET     /*file                      controllers.Assets.at(path="/public", file)
